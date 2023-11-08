@@ -8,8 +8,6 @@ import os
 
 # IMAGE SCRAPPING DARI GOOGLE IMAGES
 
-# TAMBAH: pencet "Show more results", stop kalo ketemu "Looks like you've reached the end"
-
 def scroll(wd):
 # Scroll ke paling bawah
     wd.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -36,8 +34,22 @@ def cari_url(topik, MAX_URL, wd):
             
             images = wd.find_elements(By.CSS_SELECTOR, ".sFlh5c.pT0Scc.iPVvYb")
             for image in images:
-                if (image.get_attribute("src") and "http" in image.get_attribute("src")):
+                if (image.get_attribute("src") and "http" in image.get_attribute("src") and (len(url_gambar) < MAX_URL)):
                     url_gambar.add(image.get_attribute("src"))  # Add ke url_gambar kalo src image mengandung link
+        
+        
+        # Pencet tombol "Show more images" 
+        show_more = wd.find_element(By.CSS_SELECTOR, ".LZ4I") 
+        if (show_more):
+            try:
+                show_more.click()
+            except:
+                pass
+        
+        # Stop kalo ketemu "Looks like you've reached the end" << BELUM BISA
+        # end = wd.find_element(By.CSS_SELECTOR, ".OuJzKb.Yu2Dnd")
+        # if (end):
+        #     break
     return url_gambar
 
 def download_url(folder_path, url, name):
@@ -45,13 +57,18 @@ def download_url(folder_path, url, name):
     path = folder_path + name
 
     try:
-        img_binary = requests.get(url).content
+        img_binary = requests.get(url, timeout = 10).content
         img_file = io.BytesIO(img_binary)
         img = Image.open(img_file)
 
         img.save(open(path, "wb"), "JPEG")
-    except:
-        pass
+        return True
+    except requests.exceptions.Timeout as t:
+        print("Timeout ", t)
+        return False
+    except Exception as e:
+        print("Exception: ", e)
+        return False
 
 def udah_ada(folder_path, file_name):
 # Cek apakah { file_name } sudah ada dalam folder { folder_path } atau belum
@@ -60,16 +77,19 @@ def udah_ada(folder_path, file_name):
 
 # Main
 wd = webdriver.Chrome()
-urls = cari_url("Cat", 5, wd)
-n = 0
-for i in urls:
+urls = cari_url("Cat", 100, wd)
+wd.quit()
 
+n = 0
+cnt = 0
+for url in urls:
     # Ganti nama file jika file dengan nama { name } sudah ada dalam folder dataset
     name = "test" + str(n) + ".jpg"
     while (udah_ada("src/static/dataset", name)):
         n += 1
         name = "test" + str(n) + ".jpg"
 
-    download_url("src/static/dataset/", i, name)
+    if (download_url("src/static/dataset/", url, name)):
+        cnt += 1
     n += 1
-wd.quit()
+    print(f"Berhasil men-download {cnt} gambar.")
