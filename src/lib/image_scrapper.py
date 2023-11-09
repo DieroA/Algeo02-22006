@@ -57,14 +57,21 @@ def download_url(folder_path, url, name):
     path = folder_path + name
 
     try:
-        img_binary = requests.get(url, timeout = 10).content
-        img_file = io.BytesIO(img_binary)
-        img = Image.open(img_file)
-
-        img.save(open(path, "wb"), "JPEG")
-        return True
+        request = requests.get(url, timeout = 10)
+        if (request.status_code == 200):             # Status_code 200 >> request berhasil
+            img_binary = request.content
+            if (len(img_binary) == 0):
+                return False 
+            
+            img_file = io.BytesIO(img_binary)
+            img = Image.open(img_file)
+            img = img.convert("RGB") 
+            img.save(open(path, "wb"), "JPEG")
+            return True
+        else:
+            return False
     except requests.exceptions.Timeout as t:
-        print("Timeout ", t)
+        print("Timeout: ", t)
         return False
     except Exception as e:
         print("Exception: ", e)
@@ -77,11 +84,10 @@ def udah_ada(folder_path, file_name):
 
 # Main
 wd = webdriver.Chrome()
-urls = cari_url("Cat", 100, wd)
+urls = cari_url("Cat", 100, wd) # Ganti "Cat" jadi topik yang ingin dicari
 wd.quit()
 
-n = 0
-cnt = 0
+n, cnt, gagal = 0, 0, 0
 for url in urls:
     # Ganti nama file jika file dengan nama { name } sudah ada dalam folder dataset
     name = "test" + str(n) + ".jpg"
@@ -91,5 +97,8 @@ for url in urls:
 
     if (download_url("src/static/dataset/", url, name)):
         cnt += 1
+    else:
+        gagal += 1
     n += 1
-    print(f"Berhasil men-download {cnt} gambar.")
+print(f"Berhasil men-download {cnt} gambar.")
+print(f"Gagal men-download {gagal} gambar.")
