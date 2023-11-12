@@ -27,7 +27,7 @@ def RGB_to_GrayScale_Formula(R, G, B):
 def Matriks_RGB_to_GrayScale(Mat_RGB):
 # Mengubah matriks RGB menjadi matriks GrayScale
     # Mendapatkan jumlah baris dan kolom dari matriks
-    height, width, rgb_tuple = Mat_RGB.shape            # rgb_tuple sebenarnya berisi 4 elemen, karena PIL menyimpan informasi RGBA
+    height, width, vec = Mat_RGB.shape            # rgb_tuple sebenarnya berisi 4 elemen, karena PIL menyimpan informasi RGBA
 
     # Membuat matriks kosong dengan ukuran yang sama
     Matriks_GrayScale = np.zeros((height, width))
@@ -43,7 +43,7 @@ def Matriks_GrayScale_to_Co_Occurence(Mat_GrayScale):
 # Mengubah matriks GrayScale menjadi matriks Co-Occurence
 # menggunakan jarak 1 pixel dengan sudut 0 derajat
     # Mendapatkan jumlah baris dan kolom dari matriks
-    height, width = Mat_GrayScale.shape
+    height, width, = Mat_GrayScale.shape
 
     # Membuat matriks kosong dengan ukuran 256x256 (dimensi GrayScale 0-255)
     Matriks_Co_Occurence = np.zeros((256, 256))
@@ -105,10 +105,10 @@ def Cosine_Similarity(Vektor1, Vektor2):
 
     return sum / (Norm_Vektor(Vektor1, 3) * Norm_Vektor(Vektor2, 3))
 
-def Hasil_CBIR_Tekstur(picture):
+def Hasil_CBIR_Tekstur(matriks):
 # mengembalikan hasil CBIR Tekstur dari gambar yang diinputkan
 # picture adalah nama file gambar yang ingin dicari
-    matriks = Picture_to_Matriks(picture)                           # Mengubah gambar menjadi matriks
+    # matriks = Picture_to_Matriks(picture)                           # Mengubah gambar menjadi matriks
     matriks = Matriks_RGB_to_GrayScale(matriks)                     # Mengubah matriks RGB menjadi matriks GrayScale
     matriks = Matriks_GrayScale_to_Co_Occurence(matriks)            # Mengubah matriks GrayScale menjadi matriks Co-Occurence dengan jarak 1 pixel dan sudut 0 derajat
     matriks = Penjumlahan_Matriks(matriks, Transpose(matriks))      # Menjumlahkan matriks Co-Occurence dengan transpose-nya untuk mendapatkan matriks simetri
@@ -116,3 +116,4 @@ def Hasil_CBIR_Tekstur(picture):
     vektor_CHE = Contrast_Homogeneity_Entropy(matriks)              # Menghitung vektor Contrast, Homogeneity, dan Entropy
     
     return vektor_CHE
+

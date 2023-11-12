@@ -7,6 +7,9 @@
         <div>
             <h1>Tubes Algeo 2: Content-Based Information Retrieval</h1>
             <form method="POST" enctype="multipart/form-data">
+                <p>Input folder dataset:</p>
+                <input type="file" name="folder_dataset" webkitdirectory multiple />
+                <p>Input query:</p>
                 <input type="file" name="query_img"><br>
                 <br>
                 <input type="checkbox" id="1" name="cbir-by-texture" value="0">
@@ -23,7 +26,7 @@
             <p>{{img_count}} images in {{time}} seconds</p>
             {% for score in scores %}
             <figure style="float: left; margin-right: 20px; margin-bottom:20px;">
-                <img src="{{url_for('static', filename='dataset/'+score[1])}}" height="200px">
+                <img src="{{url_for('static', filename='dataset/'+dataset_folder+'/'+score[1])}}" height="200px">
                 <figcaption>{{ score[0] }}</figcaption>
             </figure>
             {% endfor %}

@@ -32,28 +32,27 @@ def rgb_to_hsv(R, G, B):
     return (h, s, v)
 
 def to_hsv(m):
-    for i in range(0, 85):
-        for j in range(0, 85):
+    for i in range(0, 256):
+        for j in range(0, 256):
             m[i,j] = rgb_to_hsv(m[i,j,0], m[i,j,1], m[i,j,2])
             
     return m
 
 def histogram(m, iM, jM):
-    sumR, sumG, sumB = 0, 0, 0
-    for i in range (iM*3, iM*3+3):
-        for j in range (jM*3, jM*3+3):
-            sumR += m[i,j,0]
-            sumG += m[i,j,1]
-            sumB += m[i,j,2]
+    sumH, sumS, sumV = 0, 0, 0
+    for i in range (iM*4, iM*4+4):
+        for j in range (jM*4, jM*4+4):
+            sumH += m[i,j,0]
+            sumS += m[i,j,1]
+            sumV += m[i,j,2]
     
-    return (sumR, sumG, sumB)
+    return (sumH / 9, sumS / 9, sumV / 9)
 
 def to_histogram(m):
-    mHistogram = np.empty([85, 85, 3])
-    for i in range(0, 85):
-        for j in range(0, 85):
-            sumRGB = histogram(m, i, j)
-            mHistogram[i,j] = sumRGB
+    mHistogram = np.empty([64, 64, 3])
+    for i in range(0, 64):
+        for j in range(0, 64):
+            mHistogram[i,j] = histogram(m, i, j)
             
     return mHistogram
 
@@ -67,14 +66,16 @@ def cosine_similarity(v1, v2):
     norm_a = math.sqrt(norm_a)
     norm_b = math.sqrt(norm_b)
     
-    cos_theta = dot / (norm_a * norm_b)
+    if norm_a * norm_b == 0:
+        cos_theta = 0
+    else:
+        cos_theta = dot / (norm_a * norm_b)
+        
     return cos_theta
 
 def similarity(m1, m2):
-    m_similarity = np.empty([85, 85])
-    for i in range(0, 85):
-        for j in range(0, 85):
-            m_similarity[i,j] = cosine_similarity(m1[i,j], m2[i,j])
+    arr1 = np.reshape(m1, -1)
+    arr2 = np.reshape(m2, -1)
     
-    similarity = np.sum(m_similarity) / (85*85)
+    similarity = cosine_similarity(arr1, arr2)
     return similarity
