@@ -1,7 +1,6 @@
 # Deskripsi: Fungsi-fungsi untuk melakukan teknik CBIR dengan parameter tekstur
 #            memanfaatkan contrast, homogeneity, dan entropy
 import numpy as np
-from PIL import Image
 import math
 
 def Penjumlahan_Matriks(Matriks1, Matriks2):
@@ -11,13 +10,6 @@ def Penjumlahan_Matriks(Matriks1, Matriks2):
 def Transpose(Matriks):
 # mengembalikan transpose dari matriks
     return np.transpose(Matriks)
-
-def Picture_to_Matriks(Picture):
-# Mengubah gambar menjadi matriks RGB
-# memanfaatkan library PIL dan numpy
-    img = Image.open(Picture)       # Membuka gambar
-    Matriks_RGB = np.array(img)         # Mengubah gambar menjadi matriks
-    return Matriks_RGB
 
 def RGB_to_GrayScale_Formula(R, G, B):
 # fungsi untuk mengubah RGB menjadi GrayScale
@@ -71,22 +63,31 @@ def Matrix_Normalisation(Matriks):
 
     return Matriks_Norm
 
-def Contrast_Homogeneity_Entropy(Matriks):
+def Texture_of_Image(Matriks):
 # mengembalikan texture sebuah matriks co-occurence yang telah dinormalisasi
 # contrast = sigma (P(i,j) * (i-j)^2)
 # homogeneity = sigma (P(i,j) / (1 + (i-j)^2))
 # entropy = -sigma ((P(i,j) * log(P(i,j))))
-    Vektor = [0, 0, 0]
+    # bonus
+# dissimilarity = sigma (P(i,j) * |i-j|)
+# ASM = sigma (P(i,j)^2)                            ASM = angular second moment
+# energy = sqrt(ASM)
+
+    Vektor = [0, 0, 0, 0, 0, 0]
 
     for i in range(256):
         for j in range(256):
-            Vektor[0] += Matriks[i][j] * (pow(i-j, 2))              # Vektor[0] = Contrast
-            Vektor[1] += Matriks[i][j] / (1 + (pow(i-j, 2)))        # Vektor[1] = Homogeneity
+            Vektor[0] += Matriks[i][j] * (pow(i-j, 2))                  # Vektor[0] = Contrast
+            Vektor[1] += Matriks[i][j] / (1 + (pow(i-j, 2)))            # Vektor[1] = Homogeneity
             
             if Matriks[i][j] != 0:      # menghindari log(0) 
                 Vektor[2] += Matriks[i][j] * math.log(Matriks[i][j])    # Vektor[2] = Entropy
+            
+            Vektor[3] += Matriks[i][j] * abs(i-j)                       # Vektor[3] = Dissimilarity
+            Vektor[4] += pow(Matriks[i][j], 2)                          # Vektor[4] = ASM
 
     Vektor[2] *= -1
+    Vektor[5] = math.sqrt(Vektor[4])                                    # Vektor[5] = Energy
 
     return Vektor
 
@@ -100,20 +101,17 @@ def Norm_Vektor(Vektor, jumlah_elemen):
 def Cosine_Similarity(Vektor1, Vektor2):
 # mengembalikan nilai cosine similarity dari 2 buah vektor
     sum = 0
-    for i in range(3):
+    for i in range(6):
         sum += Vektor1[i] * Vektor2[i]
 
-    return sum / (Norm_Vektor(Vektor1, 3) * Norm_Vektor(Vektor2, 3))
+    return sum / (Norm_Vektor(Vektor1, 6) * Norm_Vektor(Vektor2, 6))
 
 def Hasil_CBIR_Tekstur(matriks):
 # mengembalikan hasil CBIR Tekstur dari gambar yang diinputkan
-# picture adalah nama file gambar yang ingin dicari
-    # matriks = Picture_to_Matriks(picture)                           # Mengubah gambar menjadi matriks
     matriks = Matriks_RGB_to_GrayScale(matriks)                     # Mengubah matriks RGB menjadi matriks GrayScale
     matriks = Matriks_GrayScale_to_Co_Occurence(matriks)            # Mengubah matriks GrayScale menjadi matriks Co-Occurence dengan jarak 1 pixel dan sudut 0 derajat
     matriks = Penjumlahan_Matriks(matriks, Transpose(matriks))      # Menjumlahkan matriks Co-Occurence dengan transpose-nya untuk mendapatkan matriks simetri
     matriks = Matrix_Normalisation(matriks)                         # Menormalisasi matriks
-    vektor_CHE = Contrast_Homogeneity_Entropy(matriks)              # Menghitung vektor Contrast, Homogeneity, dan Entropy
+    vektor_Texture = Texture_of_Image(matriks)          # Menghitung vektor Contrast, Homogeneity, dan Entropy, Dissimilarity, ASM, dan Energy
     
-    return vektor_CHE
-
+    return vektor_Texture
