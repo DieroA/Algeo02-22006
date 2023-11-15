@@ -3,6 +3,7 @@ import lib.cbir_by_color as cbc
 import lib.cbir_by_tekstur as cbt
 import time
 import os
+import shutil
 from PIL import Image
 from lib.feature_extractor import FeatureExtractor
 from datetime import datetime
@@ -12,11 +13,35 @@ from pathlib import Path
 app = Flask(__name__)
 fe = FeatureExtractor()
 
+scores = []
+pagination = {}
+img_name = ""
+parent_dir = ""
+end, start = 0, 0
+
 @app.route("/", methods=["GET", "POST"])
 def index():
+    global scores, pagination, img_name, parent_dir, end, start
     if request.method == "POST":
         dataset = request.files.getlist("folder_dataset")
         query = request.files["query_img"]
+        
+        no_data_input = not dataset[0]
+        no_query_input = not query
+        if no_data_input or no_query_input:
+            return render_template("index.html", error_dataset_empty=no_data_input, error_query_empty=no_query_input)
+        
+        # Delete previous dataset and features
+        parent_dir = os.path.basename(os.path.dirname(dataset[0].filename))
+        uploaded_dataset_path = "src/static/dataset/" + parent_dir
+        if (os.path.isdir(uploaded_dataset_path)):
+            shutil.rmtree(uploaded_dataset_path)
+        textures = [feature for feature in os.listdir("src/static/feature/texture")]
+        for feature in textures:
+            os.remove(os.path.join("src/static/feature/texture", feature))
+        colors = [feature for feature in os.listdir("src/static/feature/hsv")]
+        for feature in colors:
+            os.remove(os.path.join("src/static/feature/hsv", feature))
         
         # Save query and dataset images
         img = Image.open(query.stream)
@@ -24,12 +49,10 @@ def index():
         img_name = datetime.now().isoformat().replace(":",".") + "_" + query.filename
         img.save(uploaded_img_path + img_name)
         
+        os.makedirs(uploaded_dataset_path, exist_ok=True)
         uploaded_dataset_path = "src/static/dataset/"
         for images in dataset:
             img = Image.open(images.stream)
-            parent_dir = os.path.basename(os.path.dirname(images.filename))
-            print(parent_dir)
-            os.makedirs(uploaded_dataset_path + parent_dir, exist_ok=True)
             img.save(uploaded_dataset_path + images.filename)
         
         features_hsv = []
@@ -73,6 +96,8 @@ def index():
             for i in range(len(features_texture)):
                 if (np.isnan(cbt.Cosine_Similarity(query, features_texture[i]))):
                     dists[i] = 0
+                elif cbt.Cosine_Similarity(query, features_texture[i]) >= 1:
+                    dists[i] = 1
                 else:
                     dists[i] = cbt.Cosine_Similarity(query, features_texture[i])
         else:
@@ -94,9 +119,39 @@ def index():
         
         end = time.time()
         
-        return render_template("index.html", query_path=img_name, scores=scores, dataset_folder=parent_dir, time=end-start, img_count=len(ids))
+        # Paginate the result
+        page = int(request.args.get('page', 1))
+        per_page = 5
+        items = paginate(page, per_page, scores)
+        total_items = len(scores)
+        total_pages = (total_items - 1) // per_page + 1
+        
+        print(page, per_page, items, total_items, total_pages)
+        
+        return render_template("index.html", query_path=img_name, scores=items, dataset_folder=parent_dir, time=end-start, img_count=total_items,
+                               pagination = {'current_page' : page, 'per_page' : per_page, 'total_pages' : total_pages, 'total_items' : total_items})
     else:
-        return render_template("index.html")
+        page = int(request.args.get('page', 1))
+        per_page = 5
+        items = paginate(page, per_page, scores)
+        total_items = len(scores)
+        total_pages = (total_items - 1) // per_page + 1
+        
+        return render_template("index.html", query_path=img_name, scores=items, dataset_folder=parent_dir, time=end-start, img_count=total_items,
+                               pagination = {'current_page' : page, 'per_page' : per_page, 'total_pages' : total_pages, 'total_items' : total_items})
+    
+def paginate(page, per_page, data):
+    start = (page-1) * per_page
+    end = start + per_page
+    return data[start:end]
+
+@app.route("/home", methods=["GET"])
+def home():
+    return render_template("home.html")
+
+@app.route("/about-us", methods=["GET"])
+def about_us():
+    return render_template("about-us.html")
 
 if __name__ == "__main__":
     app.run(debug="True")
