@@ -67,6 +67,7 @@ def index():
         
         # Run search on database
         if request.form.get("cbir-by-texture"):
+            img = Image.open("src/static/query/" + img_name)
             query = fe.extractTexture(img)
             dists = np.empty([len(features_texture)])
             for i in range(len(features_texture)):
@@ -75,6 +76,7 @@ def index():
                 else:
                     dists[i] = cbt.Cosine_Similarity(query, features_texture[i])
         else:
+            img = Image.open("src/static/query/" + img_name)
             query = fe.extractHSV(img)
             dists = np.empty([len(features_hsv)])
             for i in range(len(features_hsv)):
