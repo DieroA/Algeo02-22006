@@ -1,16 +1,108 @@
 <!DOCTYPE html>
-<head>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style1.css') }}"
+    />
     <title>Tubes Algeo 2: Content-Based Information Retrieval</title>
-</head>
-<body>
-    <nav>
-        <a href="home">Home</a>
-        <a href="/">Program</a>
-        <a href="about-us">About Us</a>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navigation-bar">
+      <div class="container-fluid">
+        <ul class="navbar-nav me-auto mb-2">
+          <li class="nav-item">
+            <a
+              href="home"
+              class="btn btn-primary custom-btn m-1 nav-link active"
+              aria-current="page"
+              >Home</a
+            >
+          </li>
+          <li class="nav-item">
+            <a href="/" class="btn btn-primary custom-btn m-1 nav-link"
+              >Program</a
+            >
+          </li>
+          <li class="nav-item">
+            <a href="about-us" class="btn btn-primary custom-btn m-1 nav-link"
+              >About Us</a
+            >
+          </li>
+        </ul>
+      </div>
     </nav>
-    <div>
-        <h1>Selamat datang di Tubes Algeo 2 Kelompok PastiSelesai!</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam repellat molestiae dolore optio ipsum tenetur corporis nobis at aut earum cum consequatur est quaerat eaque quis doloremque, architecto sed dolorem?</p>
+
+    <div class="container">
+      <div class="row mt-4 mb-4">
+        <div class="col text-center">
+          <h1>Tubes Algeo 2</h1>
+          <p>Kelompok PastiSelesai</p>
+        </div>
+      </div>
+      <div class="row mb-5">
+        <div class="col-md-12 mb-2">
+          <h2 class="kotak">
+            Konsep <i><b>Search Engine</b></i> ini
+          </h2>
+        </div>
+        <div class="col-md-7">
+          <p class="garis-bawah">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius ipsum,
+            explicabo nesciunt sit, repellat nihil unde impedit neque adipisci
+            quo doloribus voluptate ut autem. Iusto voluptatem nemo beatae
+            tenetur culpa! Illum iste eveniet dicta fugit animi aspernatur
+            nulla, eius architecto magni illo. Ut consequuntur cupiditate et
+            nulla omnis facilis mollitia!
+          </p>
+        </div>
+        <div class="col-md-5 ml-4">
+          <figure>
+            <img
+              class="image-fluid w-75 kotak2"
+              src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Principe_cbir.png"
+              alt="CBRI"
+            />
+            <figcaption class="indent">Sumber: Wikipedia</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mb-2">
+          <h2 class="kotak">Tahap Pemakaian</h2>
+        </div>
+        <div class="col-md-12">
+          <ol class="list-group list-group-numbered">
+            <li class="list-group-item lg">
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit
+              debitis dicta ab pariatur officia laboriosam natus impedit minima
+              laudantium quaerat!
+            </li>
+            <li class="list-group-item lg">Lorem ipsum dolor sit amet.</li>
+            <li class="list-group-item lg">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat
+              eos ratione commodi!
+            </li>
+            <li class="list-group-item lg">
+              Lorem Lorem ipsum, dolor sit amet consectetur adipisicing..
+            </li>
+          </ol>
+        </div>
+      </div>
     </div>
-</body>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

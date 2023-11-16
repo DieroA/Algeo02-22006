@@ -8,6 +8,26 @@ img.langkah {
   height: auto;
 }
 
+.kotak {
+  border: 2px solid #000;
+  padding: 10px;
+  display: inline-block;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.indent {
+  text-indent: 10em;
+  font-size: smaller;
+}
+
+.kotak2 {
+  border: 2px solid #000;
+  padding: 15px;
+  display: inline-block;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
 .navigation-bar {
   background-color: beige;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
@@ -17,7 +37,6 @@ img.langkah {
   background-color: rgb(204, 204, 183);
   box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.1);
 }
-
 .custom-btn.active {
   background-color: rgb(138, 138, 124);
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
@@ -28,12 +47,23 @@ img.langkah {
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
 }
 
-.custom-btn:active {
+.custom-btn:not(:disabled):not(:disabled):active {
   background-color: rgb(162, 162, 146);
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 .custom-btn:focus {
   background-color: rgb(162, 162, 146);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+body::after {
+  content: "";
+  height: 10vh;
+  display: block;
+}
+
+.lg {
+  background-color: beige;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
 }
