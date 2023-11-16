@@ -1,0 +1,39 @@
+h2 {
+  font-size: 18px;
+  font-weight: normal;
+}
+
+img.langkah {
+  width: 350px;
+  height: auto;
+}
+
+.navigation-bar {
+  background-color: beige;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn {
+  background-color: rgb(204, 204, 183);
+  box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn.active {
+  background-color: rgb(138, 138, 124);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn:hover {
+  background-color: rgb(162, 162, 146);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn:active {
+  background-color: rgb(162, 162, 146);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn:focus {
+  background-color: rgb(162, 162, 146);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}

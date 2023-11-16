@@ -153,5 +153,13 @@ def home():
 def about_us():
     return render_template("about-us.html")
 
+@app.route("/konsep-singkat", methods=["GET"])
+def konsep_singkat():
+    return render_template("konsep-singkat.html")
+
+@app.route("/how-to-use", methods=["GET"])
+def how_to_use():
+    return render_template("how-to-use.html")
+
 if __name__ == "__main__":
     app.run(debug="True")
