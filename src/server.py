@@ -59,12 +59,13 @@ def index():
                     feature = fe.extractTexture(img=Image.open(img_path))
                     feature_path = Path("src/static/feature/texture") / (img_path.stem + "_texture" + ".npy") 
                     np.save(feature_path, feature)
-            
+                
                 for img_path in sorted(Path("src/static/dataset/" + parent_dir).glob("*.jpg")):
                     print(img_path)
                     feature = fe.extractHSV(img=Image.open(img_path))
                     feature_path = Path("src/static/feature/hsv") / (img_path.stem + "_hsv" + ".npy") 
                     np.save(feature_path, feature)
+
         if no_query_input:
             return render_template("index.html", error_query_empty=no_query_input)
 
@@ -83,7 +84,7 @@ def index():
                 features_texture.append(np.load(feature_path))
                 img_paths.append(feature_path.stem.replace("_texture", "")+ ".jpg")
             features_texture = np.array(features_texture)
-
+            
             img = Image.open("src/static/query/" + img_name)
             query = fe.extractTexture(img)
             dists = np.empty([len(features_texture)])
@@ -94,6 +95,7 @@ def index():
                     dists[i] = 1
                 else:
                     dists[i] = cbt.Cosine_Similarity(query, features_texture[i])
+
         else:
             features_hsv = []
             for feature_path in Path("src/static/feature/hsv").glob("*.npy"):
