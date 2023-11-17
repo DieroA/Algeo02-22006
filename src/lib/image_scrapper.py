@@ -82,23 +82,23 @@ def udah_ada(folder_path, file_name):
     file_path = os.path.join(folder_path, file_name)
     return (os.path.isfile(file_path))
 
-# Main
-wd = webdriver.Chrome()
-urls = cari_url("Cat", 100, wd) # Ganti "Cat" jadi topik yang ingin dicari
-wd.quit()
+def image_scrapping(search_term):
+    wd = webdriver.Chrome()
+    urls = cari_url(search_term, 100, wd)
+    wd.quit()
 
-n, cnt, gagal = 0, 0, 0
-for url in urls:
-    # Ganti nama file jika file dengan nama { name } sudah ada dalam folder dataset
-    name = "test" + str(n) + ".jpg"
-    while (udah_ada("src/static/dataset", name)):
-        n += 1
+    n, cnt, gagal = 0, 0, 0
+    for url in urls:
+        # Ganti nama file jika file dengan nama { name } sudah ada dalam folder dataset
         name = "test" + str(n) + ".jpg"
+        while (udah_ada("src/static/dataset", name)):
+            n += 1
+            name = "test" + str(n) + ".jpg"
 
-    if (download_url("src/static/dataset/", url, name)):
-        cnt += 1
-    else:
-        gagal += 1
-    n += 1
-print(f"Berhasil men-download {cnt} gambar.")
-print(f"Gagal men-download {gagal} gambar.")
+        if (download_url("src/static/dataset/", url, name)):
+            cnt += 1
+        else:
+            gagal += 1
+        n += 1
+    print(f"Berhasil men-download {cnt} gambar.")
+    print(f"Gagal men-download {gagal} gambar.")
