@@ -10,9 +10,10 @@ class FeatureExtractor:
     
     def extractHSV(self, img):
         img = img.resize((256, 256)).convert("RGB")
-        arr = cbc.to_histogram(cbc.to_hsv(np.array(img)))
+        hsv = cbc.to_hsv(np.array(img))
+        res = cbc.to_histogram(hsv, np.empty([64, 64, 3], dtype=np.float64))
 
-        return arr
+        return res
     
     def extractTexture(self, img):
         img = img.resize((256, 256))

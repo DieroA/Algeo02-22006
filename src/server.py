@@ -19,7 +19,7 @@ img_name = ""
 parent_dir = ""
 end, start = 0, 0
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/program", methods=["GET", "POST"])
 def index():
     global scores, pagination, img_name, parent_dir, end, start
     if request.method == "POST":
@@ -69,7 +69,6 @@ def index():
             return render_template("index.html", error_query_empty=no_query_input)
 
         # Save query image
-        
         img = Image.open(query.stream)
         uploaded_img_path = "src/static/query/"
         img_name = datetime.now().isoformat().replace(":",".") + "_" + query.filename
@@ -88,12 +87,10 @@ def index():
             query = fe.extractTexture(img)
             dists = np.empty([len(features_texture)])
             for i in range(len(features_texture)):
-                if (np.isnan(cbt.Cosine_Similarity(query, features_texture[i]))):
+                if (np.isnan(cbc.cosine_similarity(query, features_texture[i]))):
                     dists[i] = 0
-                elif cbt.Cosine_Similarity(query, features_texture[i]) >= 1:
-                    dists[i] = 1
                 else:
-                    dists[i] = cbt.Cosine_Similarity(query, features_texture[i])
+                    dists[i] = cbc.cosine_similarity(query, features_texture[i])
         else:
             features_hsv = []
             for feature_path in Path("src/static/feature/hsv").glob("*.npy"):
@@ -128,7 +125,7 @@ def index():
         
         print(page, per_page, items, total_items, total_pages)
         
-        return render_template("index.html", query_path=img_name, scores=items, dataset_folder=parent_dir, time=end-start, img_count=total_items,
+        return render_template("index.html", query_path=img_name, scores=items, dataset_folder=parent_dir, time=round(end-start, 2), img_count=total_items,
                                pagination = {'current_page' : page, 'per_page' : per_page, 'total_pages' : total_pages, 'total_items' : total_items})
     else:
         page = int(request.args.get('page', 1))
@@ -137,7 +134,7 @@ def index():
         total_items = len(scores)
         total_pages = (total_items - 1) // per_page + 1
         
-        return render_template("index.html", query_path=img_name, scores=items, dataset_folder=parent_dir, time=end-start, img_count=total_items,
+        return render_template("index.html", query_path=img_name, scores=items, dataset_folder=parent_dir, time=round(end-start, 2), img_count=total_items,
                                pagination = {'current_page' : page, 'per_page' : per_page, 'total_pages' : total_pages, 'total_items' : total_items})
     
 def paginate(page, per_page, data):
@@ -145,7 +142,7 @@ def paginate(page, per_page, data):
     end = start + per_page
     return data[start:end]
 
-@app.route("/home", methods=["GET"])
+@app.route("/", methods=["GET"])
 def home():
     return render_template("home.html")
 

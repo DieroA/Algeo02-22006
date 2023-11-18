@@ -1,29 +1,32 @@
 # Deskripsi: Fungsi-fungsi untuk melakukan teknik CBIR dengan parameter tekstur
 #            memanfaatkan contrast, homogeneity, dan entropy
+from numba import njit
 import numpy as np
 import math
 
+@njit
 def Penjumlahan_Matriks(Matriks1, Matriks2):
 # mengembalikan hasil penjumlahan 2 buah matriks
     return np.add(Matriks1, Matriks2)
 
+@njit
 def Transpose(Matriks):
 # mengembalikan transpose dari matriks
     return np.transpose(Matriks)
 
+@njit
 def RGB_to_GrayScale_Formula(R, G, B):
 # fungsi untuk mengubah RGB menjadi GrayScale
 # y = 0.299R + 0.587G + 0.114B
     return 0.29*R + 0.587*G + 0.114*B
 
+@njit
 def Matriks_RGB_to_GrayScale(Mat_RGB):
 # Mengubah matriks RGB menjadi matriks GrayScale
     # Mendapatkan jumlah baris dan kolom dari matriks
-    height, width, vec = Mat_RGB.shape            # rgb_tuple sebenarnya berisi 4 elemen, karena PIL menyimpan informasi RGBA
-
+    height, width, vec = Mat_RGB.shape
     # Membuat matriks kosong dengan ukuran yang sama
-    Matriks_GrayScale = np.zeros((height, width))
-    
+    Matriks_GrayScale = np.empty((height, width))
     # Mengubah elemen matriks menjadi GrayScale
     for i in range(height):
         for j in range(width):
@@ -31,11 +34,12 @@ def Matriks_RGB_to_GrayScale(Mat_RGB):
                                       # dilakukan pembulatan agar memudahkan pembuatan matriks Co-Occurence
     return Matriks_GrayScale
 
+@njit
 def Matriks_GrayScale_to_Co_Occurence(Mat_GrayScale):
 # Mengubah matriks GrayScale menjadi matriks Co-Occurence
 # menggunakan jarak 1 pixel dengan sudut 0 derajat
     # Mendapatkan jumlah baris dan kolom dari matriks
-    height, width, = Mat_GrayScale.shape
+    height, width = Mat_GrayScale.shape
 
     # Membuat matriks kosong dengan ukuran 256x256 (dimensi GrayScale 0-255)
     Matriks_Co_Occurence = np.zeros((256, 256))
@@ -48,21 +52,14 @@ def Matriks_GrayScale_to_Co_Occurence(Mat_GrayScale):
     
     return Matriks_Co_Occurence
 
+@njit
 def Matrix_Normalisation(Matriks):
 # menormalisasi matriks
-    baris, kolom = Matriks.shape
-    Matriks_Norm = np.zeros((baris, kolom))
-    
-    # Menghitung jumlah seluruh elemen matriks
-    sum = np.sum(Matriks)
+    sum = np.sum(Matriks)       # Menghitung jumlah seluruh elemen matriks
+    Matriks /= sum              # Membagi setiap elemen matriks dengan jumlah seluruh elemen matriks
+    return Matriks
 
-    # Melakukan normalisasi matriks
-    for i in range(baris):
-        for j in range(kolom):
-            Matriks_Norm[i][j] = Matriks[i][j] / sum
-
-    return Matriks_Norm
-
+@njit
 def Texture_of_Image(Matriks):
 # mengembalikan texture sebuah matriks co-occurence yang telah dinormalisasi
 # contrast = sigma (P(i,j) * (i-j)^2)
@@ -72,8 +69,7 @@ def Texture_of_Image(Matriks):
 # dissimilarity = sigma (P(i,j) * |i-j|)
 # ASM = sigma (P(i,j)^2)                            ASM = angular second moment
 # energy = sqrt(ASM)
-
-    Vektor = [0, 0, 0, 0, 0, 0]
+    Vektor = np.zeros((6))
 
     for i in range(256):
         for j in range(256):
@@ -91,21 +87,21 @@ def Texture_of_Image(Matriks):
 
     return Vektor
 
-def Norm_Vektor(Vektor, jumlah_elemen):
+@njit
+def Norm_Vektor(Vektor):
 # mengembalikan nilai norm/magnitude (panjang) sebuah vektor
-    magnitude = 0
-    for i in range(jumlah_elemen):
-        magnitude += Vektor[i]**2
+    magnitude = np.sum(np.power(Vektor, 2))     # setiap elemen dikuadratkan kemudian dijumlahkan
     return math.sqrt(magnitude)
 
+@njit
 def Cosine_Similarity(Vektor1, Vektor2):
 # mengembalikan nilai cosine similarity dari 2 buah vektor
-    sum = 0
-    for i in range(6):
-        sum += Vektor1[i] * Vektor2[i]
+    vektor = np.multiply(Vektor1, Vektor2)      # mengalikan setiap elemen vektor yang bersesuaian
+    sum = np.sum(vektor)                        # menjumlahkan setiap elemen vektor yang telah dikalikan
+    
+    return sum / (Norm_Vektor(Vektor1) * Norm_Vektor(Vektor2))
 
-    return sum / (Norm_Vektor(Vektor1, 6) * Norm_Vektor(Vektor2, 6))
-
+@njit
 def Hasil_CBIR_Tekstur(matriks):
 # mengembalikan hasil CBIR Tekstur dari gambar yang diinputkan
     matriks = Matriks_RGB_to_GrayScale(matriks)                     # Mengubah matriks RGB menjadi matriks GrayScale

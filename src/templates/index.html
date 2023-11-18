@@ -1,55 +1,115 @@
 <!DOCTYPE html>
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style1.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <title>Tubes Algeo 2: Content-Based Information Retrieval</title>
 </head>
 <body>
-    <nav>
-        <a href="home">Home</a>
-        <a href="index">Program</a>
-        <a href="about-us">About Us</a>
-    </nav>
-    <div>
-        <h1>Tubes Algeo 2: Content-Based Information Retrieval</h1>
-        <form method="POST" enctype="multipart/form-data">
-            <p>Input folder dataset:</p>
-            <input type="file" name="folder_dataset" webkitdirectory multiple />
-            {% if error_dataset_empty %}
-            <p style="color: red; margin: 2px;">Folder dataset belum diupload!</p>
-            {% endif %}
-            <p>
-            <p>Input query:</p>
-            <input type="file" name="query_img"><br>
-            {% if error_query_empty %}
-            <p style="color: red; margin: 2px;">Query belum diupload!</p>
-            {% endif %}
-            <br>
-            <input type="checkbox" id="1" name="cbir-by-texture" value="0">
-            <label for="cbir-by-texture">CBIR by: color (off), texture (on)</label><br>
-            <br>
-            <input type="submit">
-        </form>
-        <h2>Query:</h2>
-        {% if query_path %}
-        <img src="{{url_for('static', filename='query/'+query_path)}}" width="300px">
-        {% endif %}
-        <h2>Results:</h2>
-        {% if scores %}
-        <p>{{img_count}} images in {{time}} seconds</p>
-        <div style="display: flex; flex-wrap: wrap;">
-        {% for score in scores %}
-        <figure style="float: left; margin-right: 20px; margin-bottom:20px;">
-            <img src="{{url_for('static', filename='dataset/'+dataset_folder+'/'+score[1])}}" height="200px">
-            <figcaption>{{ score[0] }}</figcaption>
-        </figure>
-        {% endfor %}
+    <nav class="navbar navbar-expand-lg navigation-bar">
+        <div class="container-fluid">
+          <ul class="navbar-nav me-auto mb-2">
+            <li class="nav-item">
+              <a
+                href="/"
+                class="btn btn-primary custom-btn m-1 nav-link"
+                aria-current="page"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="program" class="btn btn-primary custom-btn m-1 nav-link active"
+                >Program</a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="about-us" class="btn btn-primary custom-btn m-1 nav-link"
+                >About Us</a
+              >
+            </li>
+          </ul>
         </div>
-        {% if pagination.total_pages > 1 %}
-            <ul class="pagination" style="text-align: center;">
-                {% for page_num in range(1, pagination.total_pages + 1) %}
-                    <a class="page-link" href="?page={{ page_num }}" style="margin: 3px;">{{ page_num }}</a>
-                {% endfor %}
-            </ul>
+    </nav>
+    <div class="container">
+        <div class="title row mt-4 mb-4 mx-auto" >
+            <div class="col text-center">
+              <h1>Tubes Algeo 2: Content-Based Information Retrieval</h1>
+            </div>
+        </div>
+        <div class="input-box kotak">
+            <form method="POST" enctype="multipart/form-data">
+                <p class="h6" style="font-family: Poppins; margin: 4px;">Input folder dataset:</p>
+                <input type="file" class="btn btn-primary custom-btn m-1 input-button" name="folder_dataset" webkitdirectory multiple />
+                {% if error_dataset_empty %}
+                <p style="color: rgb(252, 208, 208); font-weight: 500; margin: 2px;">Folder dataset belum diupload!</p>
+                {% endif %}
+                <p>
+                <p class="h6" style="font-family: Poppins; margin: 4px;">Input query:</p>
+                <input type="file" class="btn btn-primary custom-btn m-1 input-button" name="query_img"><br>
+                {% if error_query_empty %}
+                <p style="color: rgb(252, 208, 208); font-weight: 500; margin: 2px;">Query belum diupload!</p>
+                {% endif %}
+                <br>
+                <div class="switch-container">
+                  <div class="switch-color">Color</div>
+                  <label class="switch">
+                    <input type="checkbox" id="1" name="cbir-by-texture" value="0">
+                    <span class="slider"></span>
+                  </label>
+                  <div class="switch-texture">Texture</div>
+                </div>
+                <br>
+                <div class="switch-container">
+                  <input type="submit" class="search-button">
+                </div>
+            </form>
+        </div>
+        {% if query_path %}
+        <div class="query-box kotak">
+            <p class="h5" style="font-family: Poppins;">Query:</p>
+            <img class="query-img" src="{{url_for('static', filename='query/'+query_path)}}" width="273px">
+        </div>
         {% endif %}
+        {% if scores %}
+        <div class="results-box kotak">
+          <div style="display: flex; justify-content: space-between; margin-left: 20px;">
+            <p class="h4" style="font-family: Poppins;">Results:</p>
+            <p style="font-family: Poppins; font-size: 16px;">{{img_count}} images in {{time}} seconds</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; justify-content:space-evenly; margin-top: 8px;">
+          {% for score in scores %}
+          <figure class="result-img">
+              <img src="{{url_for('static', filename='dataset/'+dataset_folder+'/'+score[1])}}" height="200px">
+              <figcaption class="similarity">{{ "{:.2%}".format(score[0]) }}</figcaption>
+          </figure>
+          {% endfor %}
+          </div>
+          {% if pagination.total_pages > 1 %}
+          <div style="display: flex; justify-content: center; margin-left: 20px; margin-top: 8px;">
+            <ul style="display: flex; text-align: center;">
+              {% for page_num in range(1, pagination.total_pages + 1) %}
+                {% if page_num == pagination.current_page %}  
+                  <a class="page-link active" href="?page={{ page_num }}">{{ page_num }}</a>
+                {% else %}
+                  <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </div>
         {% endif %}
     </div>
 </body>

@@ -1,6 +1,8 @@
+from numba import njit
 import numpy as np
 import math
 
+@njit
 def rgb_to_hsv(R, G, B):
     r = R / 255
     g = G / 255
@@ -31,6 +33,7 @@ def rgb_to_hsv(R, G, B):
     
     return (h, s, v)
 
+@njit
 def to_hsv(m):
     for i in range(0, 256):
         for j in range(0, 256):
@@ -38,6 +41,7 @@ def to_hsv(m):
             
     return m
 
+@njit
 def histogram(m, iM, jM):
     sumH, sumS, sumV = 0, 0, 0
     for i in range (iM*4, iM*4+4):
@@ -48,15 +52,20 @@ def histogram(m, iM, jM):
     
     return (sumH / 9, sumS / 9, sumV / 9)
 
-def to_histogram(m):
-    mHistogram = np.empty([64, 64, 3])
+@njit
+def to_histogram(m, mHistogram):
     for i in range(0, 64):
         for j in range(0, 64):
             mHistogram[i,j] = histogram(m, i, j)
             
     return mHistogram
 
+@njit
 def cosine_similarity(v1, v2):
+    # dot = np.dot(v1, v2)
+    # norm_a = math.sqrt(np.sum(np.power(v1, 2)))
+    # norm_b = math.sqrt(np.sum(np.power(v2, 2)))
+    
     dot, norm_a, norm_b = 0, 0, 0
     for i in range(0, len(v1)):
         dot += v1[i] * v2[i]
@@ -66,13 +75,14 @@ def cosine_similarity(v1, v2):
     norm_a = math.sqrt(norm_a)
     norm_b = math.sqrt(norm_b)
     
-    if norm_a * norm_b == 0:
+    if norm_a == 0 or norm_b == 0:
         cos_theta = 0
     else:
         cos_theta = dot / (norm_a * norm_b)
         
     return cos_theta
 
+@njit
 def similarity(m1, m2):
     arr1 = np.reshape(m1, -1)
     arr2 = np.reshape(m2, -1)
