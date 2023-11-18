@@ -27,6 +27,7 @@ def Matriks_RGB_to_GrayScale(Mat_RGB):
     height, width, vec = Mat_RGB.shape
     # Membuat matriks kosong dengan ukuran yang sama
     Matriks_GrayScale = np.empty((height, width))
+    Matriks_GrayScale = np.empty((height, width))
     # Mengubah elemen matriks menjadi GrayScale
     for i in range(height):
         for j in range(width):
@@ -59,7 +60,6 @@ def Matrix_Normalisation(Matriks):
     Matriks /= sum              # Membagi setiap elemen matriks dengan jumlah seluruh elemen matriks
     return Matriks
 
-@njit
 def Texture_of_Image(Matriks):
 # mengembalikan texture sebuah matriks co-occurence yang telah dinormalisasi
 # contrast = sigma (P(i,j) * (i-j)^2)
@@ -87,7 +87,6 @@ def Texture_of_Image(Matriks):
 
     return Vektor
 
-@njit
 def Norm_Vektor(Vektor):
 # mengembalikan nilai norm/magnitude (panjang) sebuah vektor
     magnitude = np.sum(np.power(Vektor, 2))     # setiap elemen dikuadratkan kemudian dijumlahkan
