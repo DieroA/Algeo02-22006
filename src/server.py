@@ -15,17 +15,19 @@ fe = FeatureExtractor()
 
 scores = []
 pagination = {}
+page = 0
 img_name = ""
 parent_dir = ""
 end, start = 0, 0
 
 @app.route("/program", methods=["GET", "POST"])
 def index():
-    global scores, pagination, img_name, parent_dir, end, start
+    global scores, pagination, page, img_name, parent_dir, end, start
     if request.method == "POST":
         dataset = request.files.getlist("folder_dataset")
         query = request.files["query_img"]
         
+        page = 1
         dir_name = 'src/static/dataset/'
 
         no_data_input = not dataset[0]
@@ -54,17 +56,22 @@ def index():
                     img.save(uploaded_dataset_path + images.filename)
                 
                 # Extract features from dataset
-                for img_path in sorted(Path("src/static/dataset/" + parent_dir).glob("*.jpg")):
-                    print(img_path)
-                    feature = fe.extractTexture(img=Image.open(img_path))
-                    feature_path = Path("src/static/feature/texture") / (img_path.stem + "_texture" + ".npy") 
-                    np.save(feature_path, feature)
+                allowed_extensions = ['.jpg', '.jpeg', '.png']
+                for img_path in sorted(Path("src/static/dataset/" + parent_dir).glob("*")):
+                    if img_path.suffix.lower() in allowed_extensions:
+                        print(img_path)
+                        feature = fe.extractTexture(img=Image.open(img_path))
+                        feature_path = Path("src/static/feature/texture") / (img_path.stem + "_texture" + ".npy") 
+                        np.save(feature_path, feature)
                 
-                for img_path in sorted(Path("src/static/dataset/" + parent_dir).glob("*.jpg")):
-                    print(img_path)
-                    feature = fe.extractHSV(img=Image.open(img_path))
-                    feature_path = Path("src/static/feature/hsv") / (img_path.stem + "_hsv" + ".npy") 
-                    np.save(feature_path, feature)
+                for img_path in sorted(Path("src/static/dataset/" + parent_dir).glob("*")):
+                    if img_path.suffix.lower() in allowed_extensions:
+                        print(img_path)
+                        feature = fe.extractHSV(img=Image.open(img_path))
+                        feature_path = Path("src/static/feature/hsv") / (img_path.stem + "_hsv" + ".npy") 
+                        np.save(feature_path, feature)
+            else:
+                parent_dir = os.listdir(dir_name)[0]
 
         if no_query_input:
             return render_template("index.html", error_query_empty=no_query_input)
@@ -77,11 +84,13 @@ def index():
         
         # Run search on database
         img_paths = []
+        for img_path in Path("src/static/dataset/" + parent_dir).glob("*"):
+            img_paths.append(img_path.stem + img_path.suffix.lower())
+            
         if request.form.get("cbir-by-texture"):
             features_texture = []
             for feature_path in Path("src/static/feature/texture").glob("*.npy"):
                 features_texture.append(np.load(feature_path))
-                img_paths.append(feature_path.stem.replace("_texture", "")+ ".jpg")
             features_texture = np.array(features_texture)
             
             img = Image.open("src/static/query/" + img_name)
@@ -96,7 +105,6 @@ def index():
             features_hsv = []
             for feature_path in Path("src/static/feature/hsv").glob("*.npy"):
                 features_hsv.append(np.load(feature_path))
-                img_paths.append(feature_path.stem.replace("_hsv", "")+ ".jpg")
             features_hsv = np.array(features_hsv)
 
             img = Image.open("src/static/query/" + img_name)
@@ -118,7 +126,8 @@ def index():
         end = time.time()
         
         # Paginate the result
-        page = int(request.args.get('page', 1))
+        if not page:
+            page = int(request.args.get('page', 1))    
         per_page = 20
         items = paginate(page, per_page, scores)
         total_items = len(scores)

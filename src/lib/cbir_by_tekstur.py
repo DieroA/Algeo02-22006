@@ -24,14 +24,14 @@ def RGB_to_GrayScale_Formula(R, G, B):
 def Matriks_RGB_to_GrayScale(Mat_RGB):
 # Mengubah matriks RGB menjadi matriks GrayScale
     # Mendapatkan jumlah baris dan kolom dari matriks
-    height, width, vec = Mat_RGB.shape
+    height, width, = (Mat_RGB.shape)[0], (Mat_RGB.shape)[1]
+    # print("height\n", height, "width\n", width)
     # Membuat matriks kosong dengan ukuran yang sama
-    Matriks_GrayScale = np.empty((height, width))
     Matriks_GrayScale = np.empty((height, width))
     # Mengubah elemen matriks menjadi GrayScale
     for i in range(height):
         for j in range(width):
-            Matriks_GrayScale[i][j] = round(RGB_to_GrayScale_Formula(Mat_RGB[i, j, 0], Mat_RGB[i, j, 1], Mat_RGB[i, j, 2]))
+            Matriks_GrayScale[i,j] = round(RGB_to_GrayScale_Formula(Mat_RGB[i, j, 0], Mat_RGB[i, j, 1], Mat_RGB[i, j, 2]))
                                       # dilakukan pembulatan agar memudahkan pembuatan matriks Co-Occurence
     return Matriks_GrayScale
 
@@ -40,7 +40,7 @@ def Matriks_GrayScale_to_Co_Occurence(Mat_GrayScale):
 # Mengubah matriks GrayScale menjadi matriks Co-Occurence
 # menggunakan jarak 1 pixel dengan sudut 0 derajat
     # Mendapatkan jumlah baris dan kolom dari matriks
-    height, width = Mat_GrayScale.shape
+    height, width = (Mat_GrayScale.shape)[0], (Mat_GrayScale.shape)[1]
 
     # Membuat matriks kosong dengan ukuran 256x256 (dimensi GrayScale 0-255)
     Matriks_Co_Occurence = np.zeros((256, 256))
@@ -60,6 +60,7 @@ def Matrix_Normalisation(Matriks):
     Matriks /= sum              # Membagi setiap elemen matriks dengan jumlah seluruh elemen matriks
     return Matriks
 
+@njit
 def Texture_of_Image(Matriks):
 # mengembalikan texture sebuah matriks co-occurence yang telah dinormalisasi
 # contrast = sigma (P(i,j) * (i-j)^2)

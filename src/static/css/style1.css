@@ -19,11 +19,31 @@ img.langkah {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 9999;
+  background-color: rgb(93, 116, 116);
+  border-bottom: 2px solid black;
+}
+
+.nav-item {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.nav-link {
+  font-family: 'Poppins';
+  font-weight: 500;
+  width: 200px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .title {
@@ -102,6 +122,10 @@ img.langkah {
 .lg {
   background-color: beige;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+
 }
 
 .input-box {

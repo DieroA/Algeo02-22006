@@ -12,11 +12,11 @@ class FeatureExtractor:
         img = img.resize((256, 256)).convert("RGB")
         hsv = cbc.to_hsv(np.array(img))
         res = cbc.to_histogram(hsv, np.empty([64, 64, 3], dtype=np.float64))
-
+        
         return res
     
     def extractTexture(self, img):
-        img = img.resize((256, 256))
+        img = img.convert("RGB")
         vector = cbt.Hasil_CBIR_Tekstur(np.array(img))
         
         return vector

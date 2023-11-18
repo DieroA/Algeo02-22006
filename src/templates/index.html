@@ -19,7 +19,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navigation-bar">
-        <div class="container-fluid">
+        <div class="navbar-container">
           <ul class="navbar-nav me-auto mb-2">
             <li class="nav-item">
               <a
@@ -93,7 +93,8 @@
           <figure class="result-img">
               <img src="{{url_for('static', filename='dataset/'+dataset_folder+'/'+score[1])}}" height="200px">
               <figcaption class="similarity">{{ "{:.2%}".format(score[0]) }}</figcaption>
-          </figure>
+              <figcaption class="similarity">{{score[1]}}</figcaption>
+          </figure> 
           {% endfor %}
           </div>
           {% if pagination.total_pages > 1 %}
