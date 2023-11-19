@@ -45,11 +45,6 @@ def cari_url(topik, MAX_URL, wd):
                 show_more.click()
             except:
                 pass
-        
-        # Stop kalo ketemu "Looks like you've reached the end" << BELUM BISA
-        # end = wd.find_element(By.CSS_SELECTOR, ".OuJzKb.Yu2Dnd")
-        # if (end):
-        #     break
     return url_gambar
 
 def download_url(folder_path, url, name):
@@ -84,7 +79,7 @@ def udah_ada(folder_path, file_name):
 
 def image_scrapping(search_term):
     wd = webdriver.Chrome()
-    urls = cari_url(search_term, 100, wd)
+    urls = cari_url(search_term, 20, wd)
     wd.quit()
 
     n, cnt, gagal = 0, 0, 0
