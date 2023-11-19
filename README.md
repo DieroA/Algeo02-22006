@@ -42,7 +42,7 @@
 
 ## Screenshots
 
-![Example screenshot](./img/screenshot.png)
+![Example screenshot](./img/Laman_Utama.png)
 
 <!-- If you have screenshots you'd like to share, include them here. -->
 
@@ -69,7 +69,7 @@
 
 ## Usage
 
-- Mulai servernya dengan menuliskan 2 perintah berikut ke dalam terminal:
+- Jalankan servernya dengan menuliskan 2 perintah berikut ke dalam terminal:
   - `cd src`
   - `python server.py`
 - Klik tombol **Program** yang terdapat di navigation bar website.
@@ -87,6 +87,7 @@ Project is: *complete*
 Room for improvement:
 
 - Design website
+- CBIR Algorithm 
 
 To do:
 

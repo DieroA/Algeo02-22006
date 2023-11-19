@@ -82,12 +82,12 @@ def index():
         
         # Run search on database
         img_paths = []
-        for img_path in sorted(Path("src/static/dataset/" + parent_dir).glob("*"), key=lambda x: (int(x.stem), x.suffix.lower())):
+        for img_path in sorted(Path("src/static/dataset/" + parent_dir).glob("*"), key=lambda x: ((x.stem), x.suffix.lower())):
             img_paths.append(img_path.stem + img_path.suffix.lower())
             
         if request.form.get("cbir-by-texture"):
             features_texture = []
-            for feature_path in sorted(Path("src/static/feature/texture").glob("*.npy"), key=lambda x: (int(x.stem.replace("_texture", "")), x.suffix.lower())):
+            for feature_path in sorted(Path("src/static/feature/texture").glob("*.npy"), key=lambda x: ((x.stem.replace("_texture", "")), x.suffix.lower())):
                 features_texture.append(np.load(feature_path))
             features_texture = np.array(features_texture)
             
@@ -101,7 +101,7 @@ def index():
                     dists[i] = cbc.cosine_similarity(query, features_texture[i])
         else:
             features_hsv = []
-            for feature_path in sorted(Path("src/static/feature/hsv").glob("*.npy"), key=lambda x: (int(x.stem.replace("_hsv", "")), x.suffix.lower())):
+            for feature_path in sorted(Path("src/static/feature/hsv").glob("*.npy"), key=lambda x: ((x.stem.replace("_hsv", "")), x.suffix.lower())):
                 features_hsv.append(np.load(feature_path))
             features_hsv = np.array(features_hsv)
 
