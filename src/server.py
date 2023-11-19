@@ -40,8 +40,8 @@ def index():
                 # Save dataset images and delete previous dataset and features
                 parent_dir = os.path.basename(os.path.dirname(dataset[0].filename))
                 uploaded_dataset_path = "src/static/dataset/" + parent_dir
-                if (os.path.isdir(uploaded_dataset_path)):
-                    shutil.rmtree(uploaded_dataset_path)
+                if (os.listdir(dir_name)):
+                    shutil.rmtree(dir_name)
                 textures = [feature for feature in os.listdir("src/static/feature/texture")]
                 for feature in textures:
                     os.remove(os.path.join("src/static/feature/texture", feature))
@@ -49,11 +49,10 @@ def index():
                 for feature in colors:
                     os.remove(os.path.join("src/static/feature/hsv", feature))
 
-                os.makedirs(uploaded_dataset_path, exist_ok=True)
-                uploaded_dataset_path = "src/static/dataset/"
+                os.makedirs(dir_name + parent_dir, exist_ok=True)
                 for images in dataset:
                     img = Image.open(images.stream)
-                    img.save(uploaded_dataset_path + images.filename)
+                    img.save(dir_name + images.filename)
                 
                 # Extract features from dataset
                 allowed_extensions = ['.jpg', '.jpeg', '.png']
